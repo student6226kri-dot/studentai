@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 app.use(cors());
@@ -32,6 +33,11 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+app.use(express.static("."));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve("index.html"));
+});
 // Render uses PORT env var
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Server running on port " + PORT));
