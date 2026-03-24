@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+  <div class="bg-gray-800 p-6 rounded-2xl shadow-xl w-full max-w-md">
+    <h1 class="text-2xl font-bold mb-4 text-center">My AI Assistant</h1>
+    <div id="chat" class="h-[60vh] overflow-y-auto mb-4 p-3 bg-gray-700 rounded-lg"></div>
+    <div class="flex gap-2">
+      <input id="input" type="text" placeholder="Ask something..." class="flex-1 p-2 rounded-lg text-black" />
+      <button onclick="sendMessage()" class="bg-blue-500 px-4 py-2 rounded-lg">Send</button>
+    </div>
+  </div>
+
+<script>
+async function sendMessage() {
+  const input = document.getElementById('input');
+  const chat = document.getElementById('chat');
+
+  if (!input.value.trim()) return;
+
+  const userText = input.value;
+
+  const userMsg = document.createElement('div');
+  userMsg.textContent = 'You: ' + userText;
+  chat.appendChild(userMsg);
+
+  input.value = '';
+
+  const aiMsg = document.createElement('div');
+  aiMsg.textContent = 'AI: Thinking...';
+  aiMsg.classList.add('text-green-400');
+  chat.appendChild(aiMsg);
+
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message: userText })
+    });
+
+    const data = await response.json();
+    aiMsg.textContent = 'AI: ' + data.reply;
+  } catch (error) {
+    aiMsg.textContent = 'AI: Server error';
+  }
+}
+</script>
+</body>
+</html>
